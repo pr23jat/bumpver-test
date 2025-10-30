@@ -20,6 +20,9 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[dependency-groups]
+dev = ["bumpver"]
+
 [bumpver]
 current_version = "0.1.0"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
