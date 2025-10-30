@@ -7,3 +7,5 @@ This is a minimal Python package configured to use BumpVer for automatic version
 Testing new version 1.1 test
 Update
 Yooooo
+
+yesss
