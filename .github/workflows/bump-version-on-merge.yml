@@ -24,26 +24,59 @@ jobs:
           ref: master
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v3
-      - run: uv sync --python 3.12
       - name: Configure Git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Determine bump flag
+      - name: Determine bump from Conventional Commits
         id: pick
-        run: |
-          part="${{ github.event.inputs.bump }}"
-          if [ -z "$part" ]; then part="patch"; fi
-          echo "part=$part" >> "$GITHUB_OUTPUT"
+        uses: actions/github-script@v7
+        env:
+          MANUAL_BUMP: ${{ github.event.inputs.bump }}
+        with:
+          script: |
+            const manual = (process.env.MANUAL_BUMP || '').trim().toLowerCase();
+            if (['major','minor','patch'].includes(manual)) {
+              core.setOutput('part', manual);
+              return;
+            }
+
+            let part = '';
+            if (context.eventName === 'pull_request' && context.payload.pull_request && context.payload.action === 'closed') {
+              const {owner, repo} = context.repo;
+              const pull_number = context.payload.pull_request.number;
+              const commits = await github.paginate(github.rest.pulls.listCommits, {
+                owner,
+                repo,
+                pull_number,
+                per_page: 100,
+              });
+              const headersRe = [/^feat(?:\(.+\))?!:/i, /^fix(?:\(.+\))?!:/i, /^\w+(?:\(.+\))?!:/i, /^feat(?:\(.+\))?:/i, /^fix(?:\(.+\))?:/i];
+              const messages = commits.map(c => c.commit && c.commit.message ? c.commit.message : '');
+              const hasBreaking = messages.some(m => /BREAKING CHANGE/i.test(m) || headersRe.slice(0,3).some(r => r.test(m.split('\n')[0] || '')));
+              if (hasBreaking) {
+                part = 'major';
+              } else if (messages.some(m => headersRe[3].test((m.split('\n')[0] || '')))) {
+                part = 'minor';
+              } else if (messages.some(m => headersRe[4].test((m.split('\n')[0] || '')))) {
+                part = 'patch';
+              }
+            }
+
+            core.setOutput('part', part);
       - name: Bump version and push
         run: |
+          if [ -z "${{ steps.pick.outputs.part }}" ]; then
+            echo "No conventional commits found (fix/feat/breaking). Skipping version bump.";
+            exit 0;
+          fi
           case "${{ steps.pick.outputs.part }}" in
             major) FLAG="--major" ;;
             minor) FLAG="--minor" ;;
             patch) FLAG="--patch" ;;
             *) echo "Invalid bump part"; exit 1 ;;
           esac
-          uv run bumpver update $FLAG --push
+          uvx bumpver update $FLAG --push
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
