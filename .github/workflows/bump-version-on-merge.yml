@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       bump:
-        description: "Bump part (major|minor|patch)"
+        description: "Select bump part (major|minor|patch)"
         required: true
         default: "patch"
         type: choice
@@ -35,10 +35,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Bump version and push
         run: |
-          if [ -z "${{ steps.pick.outputs.part }}" ]; then
-            echo "No conventional commits found (fix/feat/breaking). Skipping version bump.";
-            exit 0;
-          fi
           case "${{ steps.pick.outputs.part }}" in
             major) FLAG="--major" ;;
             minor) FLAG="--minor" ;;
