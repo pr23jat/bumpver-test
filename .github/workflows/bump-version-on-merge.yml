@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   bump:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,42 +28,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Determine bump from Conventional Commits
-        id: pick
-        uses: actions/github-script@v7
-        env:
-          MANUAL_BUMP: ${{ github.event.inputs.bump }}
-        with:
-          script: |
-            const manual = (process.env.MANUAL_BUMP || '').trim().toLowerCase();
-            if (['major','minor','patch'].includes(manual)) {
-              core.setOutput('part', manual);
-              return;
-            }
-
-            let part = '';
-            if (context.eventName === 'pull_request' && context.payload.pull_request && context.payload.action === 'closed') {
-              const {owner, repo} = context.repo;
-              const pull_number = context.payload.pull_request.number;
-              const commits = await github.paginate(github.rest.pulls.listCommits, {
-                owner,
-                repo,
-                pull_number,
-                per_page: 100,
-              });
-              const headersRe = [/^feat(?:\(.+\))?!:/i, /^fix(?:\(.+\))?!:/i, /^\w+(?:\(.+\))?!:/i, /^feat(?:\(.+\))?:/i, /^fix(?:\(.+\))?:/i];
-              const messages = commits.map(c => c.commit && c.commit.message ? c.commit.message : '');
-              const hasBreaking = messages.some(m => /BREAKING CHANGE/i.test(m) || headersRe.slice(0,3).some(r => r.test(m.split('\n')[0] || '')));
-              if (hasBreaking) {
-                part = 'major';
-              } else if (messages.some(m => headersRe[3].test((m.split('\n')[0] || '')))) {
-                part = 'minor';
-              } else if (messages.some(m => headersRe[4].test((m.split('\n')[0] || '')))) {
-                part = 'patch';
-              }
-            }
-
-            core.setOutput('part', part);
       - name: Bump version and push
         run: |
           if [ -z "${{ steps.pick.outputs.part }}" ]; then
