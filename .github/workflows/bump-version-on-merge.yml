@@ -1,49 +1,50 @@
-name: Bump version on PR merge to master
+name: Bump Version 🚀
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [master]
   workflow_dispatch:
     inputs:
       bump:
-        description: "Bump part (major|minor|patch)"
-        required: false
+        description: "Select which part to bump"
+        required: true
         default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 permissions:
   contents: write
 
 jobs:
   bump:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: master
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v3
-      - run: uv sync --python 3.12
+
+      - name: Setup UV
+        uses: astral-sh/setup-uv@v3
+
       - name: Configure Git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Determine bump flag
-        id: pick
-        run: |
-          part="${{ github.event.inputs.bump }}"
-          if [ -z "$part" ]; then part="patch"; fi
-          echo "part=$part" >> "$GITHUB_OUTPUT"
+
       - name: Bump version and push
         run: |
-          case "${{ steps.pick.outputs.part }}" in
+          case "${{ github.event.inputs.bump }}" in
             major) FLAG="--major" ;;
             minor) FLAG="--minor" ;;
-            patch) FLAG="--patch" ;;
-            *) echo "Invalid bump part"; exit 1 ;;
+            patch|""|*) FLAG="--patch" ;;
           esac
-          uv run bumpver update $FLAG --push
+
+          echo "🔹 Bumping version with flag: $FLAG"
+          uvx bumpver update $FLAG --push
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
