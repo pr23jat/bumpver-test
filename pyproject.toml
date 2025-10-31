@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bumpver-test"
-version = "2.3.0"
+version = "2.3.1"
 description = "A minimal Python package configured to use BumpVer (automatic versioning)."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -24,7 +24,7 @@ where = ["app"]
 dev = ["bumpver"]
 
 [bumpver]
-current_version = "2.3.0"
+current_version = "2.3.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version from {old_version} to {new_version}"
 tag_message = "{new_version}"
