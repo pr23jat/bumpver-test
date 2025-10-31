@@ -62,7 +62,17 @@ jobs:
           else
             echo "✅ New version detected: $CURRENT (latest was $LATEST)"
           fi
-
+      - name: Verify GitHub Token (safe check)
+        run: |
+          if [ -z "${{ secrets.GH_ACTION_PAT }}" ]; then
+            echo "❌ GITHUB_TOKEN is not available"
+            exit 1
+          else
+            echo "✅ GITHUB_TOKEN is available (not showing value for security)"
+            gh auth status || gh auth login --with-token <<< "${{ secrets.GH_ACTION_PAT }}"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
       - name: Create Git tag and release
         env:
           VERSION: ${{ steps.version.outputs.version }}
