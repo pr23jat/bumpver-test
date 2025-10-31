@@ -40,7 +40,7 @@ push = false
   'current_version = "{version}"',
   'version = "{pep440_version}"',
 ]
-"app/version/__init__.py" = [
+"apps/version/__init__.py" = [
   '__version__ = "{version}"',
 ]
 "README.md" = [
