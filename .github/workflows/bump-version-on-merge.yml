@@ -1,4 +1,4 @@
-name: Bump Version 🚀
+name: Update Version
 
 on:
   workflow_dispatch:
@@ -23,9 +23,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 0
 
       - name: Setup UV
         uses: astral-sh/setup-uv@v3
