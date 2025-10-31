@@ -15,18 +15,18 @@ authors = [{ name = "Your Name", email = "you@example.com" }]
 keywords = ["versioning", "bumpver"]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "app"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["app"]
 
 [dependency-groups]
 dev = ["bumpver"]
 
 [bumpver]
 current_version = "2.3.0"
-version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
-commit_message = "bump version to {new_version}"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version from {old_version} to {new_version}"
 tag_message = "{new_version}"
 tag_scope = "default"
 pre_commit_hook = ""
@@ -40,7 +40,7 @@ push = false
   'current_version = "{version}"',
   'version = "{pep440_version}"',
 ]
-"src/bumpver_test/__init__.py" = [
+"app/version/__init__.py" = [
   '__version__ = "{version}"',
 ]
 "README.md" = [
