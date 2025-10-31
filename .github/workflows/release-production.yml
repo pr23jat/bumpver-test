@@ -2,12 +2,6 @@ name: Create Release Tag
 
 on:
   workflow_dispatch:
-    inputs:
-      source_branch:
-        description: "Select the source branch (must start with release/)"
-        required: true
-        type: string
-        default: "release/"
 
 permissions:
   contents: write
@@ -20,15 +14,16 @@ jobs:
     steps:
       - name: Validate source branch
         run: |
-          if [[ ! "${{ github.event.inputs.source_branch }}" =~ ^release/ ]]; then
+          if [[ ! "${{ github.ref_name }}" =~ ^release/ ]]; then
             echo "🚫 Invalid branch. Only branches starting with 'release/' are allowed."
             exit 1
           fi
+          echo "✅ Branch validated: ${{ github.ref_name }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.source_branch }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Extract version from file
