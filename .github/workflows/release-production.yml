@@ -79,7 +79,6 @@ jobs:
       - name: Create Git tag and release
         env:
           VERSION: ${{ steps.version.outputs.version }}
-          GH_ACTION_PAT: ${{ secrets.GH_ACTION_PAT }}
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
         run: |
           echo "🏷️ Creating new tag: v$VERSION"
@@ -91,4 +90,4 @@ jobs:
           echo "📦 Creating GitHub release..."
           gh release create "v$VERSION" \
             --title "Release v$VERSION" \
-            --notes "Automated release from branch ${{ github.event.inputs.source_branch }}"
+            --generate-notes \
