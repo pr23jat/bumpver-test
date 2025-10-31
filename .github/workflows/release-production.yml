@@ -74,6 +74,7 @@ jobs:
       - name: Create Git tag and release
         env:
           VERSION: ${{ steps.version.outputs.version }}
+          LATEST_TAG: ${{ steps.latest.outputs.latest_tag }}
           GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
         run: |
           echo "🏷️ Creating new tag: v$VERSION"
@@ -82,7 +83,34 @@ jobs:
           git tag -a "v$VERSION" -m "v$VERSION"
           git push origin "v$VERSION"
 
-          echo "📦 Creating GitHub release..."
+          echo "📦 Determining previous tag..."
+          PREVIOUS_TAG="${LATEST_TAG:-none}"
+          echo "Previous tag: ${PREVIOUS_TAG:-<none>}"
+
+          echo "🧾 Generating release notes..."
+          if [ -z "$PREVIOUS_TAG" ]; then
+            NOTES="Initial release."
+          else
+            # Fetch merged PRs between previous tag and current tag
+            NOTES=$(gh api repos/${{ github.repository }}/pulls \
+              --jq '.[] | select(.merged_at != null) | 
+              select(.merge_commit_sha as $sha | 
+              inside(["'$(git log --format="%H" ${PREVIOUS_TAG}..v$VERSION | tr "\n" "," | sed "s/,$//")'"])) | 
+              "* \(.title) by @\(.user.login) in \(.html_url)"' \
+              2>/dev/null || echo "")
+
+            if [ -z "$NOTES" ]; then
+              NOTES="No pull requests merged between $PREVIOUS_TAG and v$VERSION."
+            else
+              NOTES="## What's Changed\n${NOTES}"
+            fi
+          fi
+
+          echo "🧾 Release Notes:"
+          echo "$NOTES"
+
+          echo "🚀 Creating GitHub release..."
           gh release create "v$VERSION" \
             --title "Release v$VERSION" \
-            --generate-notes \
+            --notes "$NOTES" \
+            --generate-notes
