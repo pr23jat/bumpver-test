@@ -15,6 +15,7 @@ permissions:
 jobs:
   create_release:
     runs-on: ubuntu-latest
+    environment: dev 
 
     steps:
       - name: Validate source branch
