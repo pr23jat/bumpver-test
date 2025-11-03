@@ -111,6 +111,6 @@ jobs:
 
           echo "🚀 Creating GitHub release..."
           gh release create "v$VERSION" \
-            --title "Release v$VERSION" \
+            --title "v$VERSION" \
             --notes "$NOTES" \
             --generate-notes
