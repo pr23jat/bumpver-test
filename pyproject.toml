@@ -1,26 +1,24 @@
-[bumpver]
-current_version = "v2.3.3"
-version_pattern = "v{MAJOR}.{MINOR}.{PATCH}"
-commit_message = "chore(release): bump version from {old_version} to {new_version}"
-tag_message = "{new_version}"
-tag_scope = "default"
-pre_commit_hook = ""
-post_commit_hook = ""
-commit = true
-tag = false
-push = false
+[build-system]
+requires = [
+  "setuptools>=69",
+  "wheel"
+]
+build-backend = "setuptools.build_meta"
 
-[bumpver.file_patterns]
-# Use "{version}" where you want the v-prefixed form
-"README.md" = [
-  "Current version: {version}",
-]
-"apps/version/__init__.py" = [
-  '__version__ = "{version}"',
-]
+[project]
+name = "bumpver-test"
+version = "2.3.3"
+description = "A minimal Python package configured to use BumpVer (automatic versioning)."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+keywords = ["versioning", "bumpver"]
 
-# Use "{pep440_version}" (no v) for files that need pure semantic versioning
-"pyproject.toml" = [
-  'current_version = "{version}"',
-  'version = "{version}"',
-]
+[tool.setuptools]
+package-dir = {"" = "app"}
+
+[tool.setuptools.packages.find]
+where = ["app"]
+
+[dependency-groups]
+dev = ["bumpver"]
