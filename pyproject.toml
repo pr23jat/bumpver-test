@@ -1,6 +1,6 @@
 [bumpver]
 current_version = "v2.3.3"
-version_pattern = "vMAJOR.MINOR.PATCH"
+version_pattern = "v{MAJOR}.{MINOR}.{PATCH}"
 commit_message = "chore(release): bump version from {old_version} to {new_version}"
 tag_message = "{new_version}"
 tag_scope = "default"
