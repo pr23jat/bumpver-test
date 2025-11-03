@@ -1,7 +1,7 @@
 
 [bumpver]
-current_version = "1.0.2"
-version_pattern = "MAJOR.MINOR.PATCH"
+current_version = "v1.0.2"
+version_pattern = "vMAJOR.MINOR.PATCH"
 commit_message = "bump version from {old_version} to {new_version}"
 tag_message = "{new_version}"
 tag_scope = "default"
@@ -16,11 +16,11 @@ push = false
   'version = "{pep440_version}"',
 ]
 "apps/version/__init__.py" = [
-  '__version__ = "{version}"',
+  '__version__ = "v{version}"',
 ]
 "README.md" = [
-  "Current version: {version}",
+  "Current version: v{version}",
 ]
 "bumpver.toml" = [
-  'current_version = "{version}"',
+  'current_version = "v{version}"',
 ]
