@@ -22,3 +22,27 @@ where = ["app"]
 
 [dependency-groups]
 dev = ["bumpver"]
+
+[bumpver]
+current_version = "1.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version from {old_version} to {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = false
+push = false
+
+[bumpver.file_patterns]
+"pyproject.toml" = [
+  'current_version = "{version}"',
+  'version = "{pep440_version}"',
+]
+"apps/version/__init__.py" = [
+  '__version__ = "{version}"',
+]
+"README.md" = [
+  "Current version: {version}",
+]
