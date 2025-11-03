@@ -13,7 +13,7 @@ push = false
 [bumpver.file_patterns]
 "pyproject.toml" = [
   'current_version = "{version}"',
-  'version = "{pep440_version}"',
+  'version = "{version}"',
 ]
 "apps/version/__init__.py" = [
   '__version__ = "{version}"',
