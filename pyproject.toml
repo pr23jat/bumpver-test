@@ -11,13 +11,16 @@ tag = false
 push = false
 
 [bumpver.file_patterns]
-"pyproject.toml" = [
-  'current_version = "{version}"',
-  'version = "{pep440_version}"',
-]
-"apps/version/__init__.py" = [
-  '__version__ = "v{version}"',
-]
+# Use "{version}" where you want the v-prefixed form
 "README.md" = [
   "Current version: {version}",
+]
+"apps/version/__init__.py" = [
+  '__version__ = "{version}"',
+]
+
+# Use "{pep440_version}" (no v) for files that need pure semantic versioning
+"pyproject.toml" = [
+  'current_version = "{version}"',
+  'version = "{version}"',
 ]
