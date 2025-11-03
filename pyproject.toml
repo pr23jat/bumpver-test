@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bumpver-test"
-version = "1.0.2"
+version = "1.0.3"
 description = "A minimal Python package configured to use BumpVer (automatic versioning)."
 readme = "README.md"
 requires-python = ">=3.12"
