@@ -1,6 +1,6 @@
 # bumpver-test
 
-Current version: 1.0.3
+Current version: v2.3.3
 
 This is a minimal Python package configured to use BumpVer for automatic versioning.
 
