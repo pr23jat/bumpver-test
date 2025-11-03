@@ -83,34 +83,7 @@ jobs:
           git tag -a "$VERSION" -m "$VERSION"
           git push origin "$VERSION"
 
-          echo "📦 Determining previous tag..."
-          PREVIOUS_TAG="${LATEST_TAG:-none}"
-          echo "Previous tag: ${PREVIOUS_TAG:-<none>}"
-
-          echo "🧾 Generating release notes..."
-          if [ -z "$PREVIOUS_TAG" ]; then
-            NOTES="Initial release."
-          else
-            # Fetch merged PRs between previous tag and current tag
-            NOTES=$(gh api repos/${{ github.repository }}/pulls \
-              --jq '.[] | select(.merged_at != null) | 
-              select(.merge_commit_sha as $sha | 
-              inside(["'$(git log --format="%H" ${PREVIOUS_TAG}..$VERSION | tr "\n" "," | sed "s/,$//")'"])) | 
-              "* \(.title) by @\(.user.login) in \(.html_url)"' \
-              2>/dev/null || echo "")
-
-            if [ -z "$NOTES" ]; then
-              NOTES="No pull requests merged between $PREVIOUS_TAG and $VERSION."
-            else
-              NOTES="## What's Changed\n${NOTES}"
-            fi
-          fi
-
-          echo "🧾 Release Notes:"
-          echo "$NOTES"
-
           echo "🚀 Creating GitHub release..."
           gh release create "$VERSION" \
             --title "$VERSION" \
-            --notes "$NOTES" \
             --generate-notes
