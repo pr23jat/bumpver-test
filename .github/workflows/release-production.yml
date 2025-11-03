@@ -100,7 +100,7 @@ jobs:
               2>/dev/null || echo "")
 
             if [ -z "$NOTES" ]; then
-              NOTES="No pull requests merged between $PREVIOUS_TAG and $VERSION."
+              NOTES=""
             else
               NOTES="## What's Changed\n${NOTES}"
             fi

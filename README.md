@@ -5,4 +5,4 @@ Current version: v2.3.11
 This is a minimal Python package configured to use BumpVer for automatic versioning.
 
 Testing new version 1.1 test
-Update Change it a lot
+Update Change it woooow
